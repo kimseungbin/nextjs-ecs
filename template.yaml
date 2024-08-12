@@ -17,15 +17,9 @@ Parameters:
     AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
     Default: 10.0.0.0/16
     Description: The CIDR block of the VPC.
-  NumOfImagesToRetain:
-    Type: Number
-    Default: '3'
-    Description: |
-      The number of images to retain in the repository.
-      Older images exceeding this number will be automatically deleted according to the lifecycle policy rules.
   CertificationArn:
     Type: String
-    Description: | 
+    Description: |
       The ARN of the AWS Certificate Manager (ACM) certificate to use for SSL/TLS termination with the CloudFront distribution.
       This should be the ARN of a certificate that covers the domain or subdomain served by CloudFront.
 Metadata:
@@ -129,25 +123,25 @@ Resources:
 
   Repository:
     Type: AWS::ECR::Repository
-  #    Properties:
-  #      LifecyclePolicy:
-  #        # noinspection YAMLSchemaValidation
-  #        LifecyclePolicyText:
-  #          Fn::ToJsonString:
-  #            rules:
-  #              - rulePriority: 1
-  #                description:
-  #                  Fn::Sub:
-  #                    - Keep last ${N} images.
-  #                    - N: !Ref NumOfImagesToRetain
-  #                selection:
-  #                  tagStatus: any
-  #                  countType: imageCountMoreThan
-  #                  countNumber: !Ref NumOfImagesToRetain
-  #                action:
-  #                  type: expire
-
-
+    Properties:
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep last 3 images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 3
+                },
+                "action": {
+                  "type": "expire"
+                }
+              }
+            ]
+          }
   EcrVpcEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -419,8 +413,8 @@ Resources:
   # noinspection YAMLSchemaValidation
   Distribution:
     Type: AWS::CloudFront::Distribution
-#    DependsOn:
-#      - DistributionLogsBucketPolicy
+    #    DependsOn:
+    #      - DistributionLogsBucketPolicy
     DeletionPolicy: RetainExceptOnCreate # todo 개발 단계에서 distribution 지속적으로 생성 시 CloudFlare 에서 수동으로 수정해야할 일이 생김
     Properties:
       DistributionConfig:
@@ -447,7 +441,7 @@ Resources:
           # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-caching-optimized
           CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
           TargetOriginId: Service1
-#          ViewerProtocolPolicy: redirect-to-https
+          #          ViewerProtocolPolicy: redirect-to-https
           ViewerProtocolPolicy: allow-all
           AllowedMethods:
             - GET
