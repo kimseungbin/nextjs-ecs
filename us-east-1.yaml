@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Template for resources that needs to be deployed in us-east-1 Region.
+Parameters:
+  DomainName:
+    Type: String
+    Default: wishdev.net
+Resources:
+  SSLCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Sub 'fe-test.${DomainName}'
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Sub 'fe-test.${DomainName}'
+          ValidationDomain: !Ref DomainName
+Outputs:
+  CertificateArn:
+    Description: The ARN of the SSL certificate issued by AWS Certificate Manager.
+    Value: !Ref SSLCertificate
+    Export:
+      Name: CertificateArn
