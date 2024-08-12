@@ -432,7 +432,7 @@ Resources:
               OriginProtocolPolicy: http-only
         Aliases:
           - Fn::Sub:
-              - ${Project}-${Environment}.wishdev.ent
+              - ${Project}-${Environment}.wishdev.net
               - Project: !Ref Project
                 Environment: !Ref Environment
         ViewerCertificate:
