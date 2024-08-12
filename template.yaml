@@ -9,6 +9,7 @@ Parameters:
     Type: String
     Description: Specifies the deployment environment for the AWS infrastructure.
     AllowedValues:
+      - test
       - dev
       - stage
       - prod
