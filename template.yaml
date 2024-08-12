@@ -501,3 +501,17 @@ Resources:
               - POST
               - PATCH
               - DELETE
+  #==================================================#
+  # Continuous Deployment                            #
+  #==================================================#
+
+  ArtifactStore:
+    Type: AWS::S3::Bucket
+  Connection:
+    Type: AWS::CodeStarConnections::Connection
+    Properties:
+      ConnectionName: !Join
+        - '-'
+        - - !Ref Project
+          - !Ref Environment
+      ProviderType: GitHub
