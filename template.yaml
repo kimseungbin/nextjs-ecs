@@ -136,7 +136,7 @@ Resources:
   # Elastic Container Registry                       #
   #==================================================#
 
-  Repository:
+  Repository1:
     Type: AWS::ECR::Repository
     Properties:
       LifecyclePolicy:
@@ -157,6 +157,28 @@ Resources:
               }
             ]
           }
+  Repository2:
+    Type: AWS::ECR::Repository
+    Properties:
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep last 3 images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 3
+                },
+                "action": {
+                  "type": "expire"
+                }
+              }
+            ]
+          }
+
   EcrVpcEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -260,7 +282,7 @@ Resources:
       ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
       ContainerDefinitions:
         - Name: nextjs-container-1 # todo parameterize
-          Image: !GetAtt [ Repository, RepositoryUri ]
+          Image: !GetAtt [ Repository1, RepositoryUri ]
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -295,7 +317,7 @@ Resources:
       ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
       ContainerDefinitions:
         - Name: nextjs-container-2 # todo parameterize
-          Image: !GetAtt [ Repository, RepositoryUri ] # todo use different repository
+          Image: !GetAtt [ Repository2, RepositoryUri ] # todo use different repository
           LogConfiguration:
             LogDriver: awslogs
             Options:
