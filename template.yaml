@@ -475,12 +475,11 @@ Resources:
             DomainName: !GetAtt [ ApplicationLoadBalancer2, DNSName ]
             CustomOriginConfig:
               OriginProtocolPolicy: http-only
-# 용길님에게 매번 CloudFlare 업데이트를 부탁드릴 수 없어 임시로 주석처리
-#        Aliases:
-#          - Fn::Sub:
-#              - ${Project}-${Environment}.wishdev.net
-#              - Project: !Ref Project
-#                Environment: !Ref Environment
+        Aliases:
+          - Fn::Sub:
+              - ${Project}-${Environment}.wishdev.net
+              - Project: !Ref Project
+                Environment: !Ref Environment
         ViewerCertificate:
           AcmCertificateArn: !Ref CertificationArn
           SslSupportMethod: sni-only
