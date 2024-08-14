@@ -19,10 +19,18 @@ Resources:
   SSLCertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
-      DomainName: !Sub 'fe-test.${DomainName}'
+      DomainName:
+        Fn::If:
+          - IsProd
+          - !Sub ${Project}.${DomainName}
+          - !Sub ${Project}-${Environment}.${DomainName}
       ValidationMethod: DNS
       DomainValidationOptions:
-        - DomainName: !Sub 'fe-test.${DomainName}'
+        - DomainName:
+            Fn::If:
+              - IsProd
+              - !Sub ${Project}.${DomainName}
+              - !Sub ${Project}-${Environment}.${DomainName}
           ValidationDomain: !Ref DomainName
 Outputs:
   CertificateArn:
@@ -30,3 +38,6 @@ Outputs:
     Value: !Ref SSLCertificate
     Export:
       Name: CertificateArn
+Conditions:
+  IsProd:
+    Fn::Equals: [ !Ref Environment, "prod" ]
