@@ -79,6 +79,18 @@ Resources:
         ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
         TaskDefinitionLogGroup: !Ref TaskDefinitionLogGroup
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
+  WishketService:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${BucketName}.s3.${AWS::Region}.amazonaws.com/${FileName}
+        - BucketName: !Ref NestedStackBucket
+          FileName: service.yaml
+      Parameters:
+        Cluster: !Ref Cluster
+        ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
+        TaskDefinitionLogGroup: !Ref TaskDefinitionLogGroup
+        NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
   DistributionStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -92,6 +104,8 @@ Resources:
         CertificateArn: !Ref CertificationArn
         AuthService: !Select [ 1, !Split [ '/', !Ref AuthService ] ]
         YozmService: !Select [ 1, !Split [ '/', !Ref YozmService ] ]
+        WishketService: !Select [ 1, !Split [ '/', !Ref WishketService ] ]
+
 
   #==================================================#
   # ECS Common                                       #
