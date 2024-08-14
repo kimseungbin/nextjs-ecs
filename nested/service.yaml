@@ -34,7 +34,7 @@ Resources:
       - HttpListenerRule
     Properties:
       Cluster:
-        Fn::ImportValue: !Sub ${ServiceCommonStack}-${Cluster}
+        Fn::ImportValue: !Sub ${ServiceCommonStack}-Cluster
       LaunchType: FARGATE
       DesiredCount: 1
       TaskDefinition: !Ref TaskDefinition
@@ -65,7 +65,7 @@ Resources:
       Cpu: 256
       Memory: 512
       ExecutionRoleArn:
-        Fn::ImportValue: !Sub ${ServiceCommonStack}-${ExecutionRoleArn}
+        Fn::ImportValue: !Sub ${ServiceCommonStack}-ExecutionRoleArn
       ContainerDefinitions:
         - Name: !Ref AWS::StackName
           Image: !GetAtt [ Repository, RepositoryUri ]
@@ -74,7 +74,7 @@ Resources:
             Options:
 #              awslogs-group: !Ref TaskDefinitionLogGroup
               awslogs-group:
-                Fn::ImportValue: !Sub ${ServiceCommonStack}-${TaskDefinitionLogGroup}
+                Fn::ImportValue: !Sub ${ServiceCommonStack}-TaskDefinitionLogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: !Ref AWS::StackName
           PortMappings:
