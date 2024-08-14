@@ -47,7 +47,7 @@ Resources:
 
 
   #==================================================#
-  # Elastic Container Service                        #
+  # Network                                          #
   #==================================================#
 
   NetworkStack:
@@ -59,6 +59,18 @@ Resources:
           FileName: network.yaml
       Parameters:
         VpcCidr: !Ref VpcCidr
+
+  #==================================================#
+  # ECS Services                                     #
+  #==================================================#
+
+  ServiceCommonStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${BucketName}.s3.${AWS::Region}.amazonaws.com/${FileName}
+        - BucketName: !Ref NestedStackBucket
+          FileName: service-common.yaml
   AuthService:
     Type: AWS::CloudFormation::Stack
     DependsOn:
@@ -97,6 +109,12 @@ Resources:
         ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
         TaskDefinitionLogGroup: !Ref TaskDefinitionLogGroup
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
+        ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
+
+  #==================================================#
+  # CloudFront Distribution                          #
+  #==================================================#
+
   DistributionStack:
     Type: AWS::CloudFormation::Stack
     Properties:
