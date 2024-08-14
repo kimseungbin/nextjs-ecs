@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Wishket Frontend Service Common Infrastructure.
+Resources:
+  Cluster:
+    Type: AWS::ECS::Cluster
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+  TaskDefinitionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 7
+Outputs:
+  Cluster:
+    Value: !Ref Cluster
+    Export:
+      Name: !Join [ '-', [ !Ref AWS::StackName, Cluster ] ]
+  ExecutionRoleArn:
+    Value: !GetAtt [ ExecutionRole, Arn ]
+    Export:
+      Name: !Join [ '-', [ !Ref AWS::StackName, ExecutionRoleArn ] ]
+  TaskDefinitionLogGroup:
+    Value: !Ref TaskDefinitionLogGroup
+    Export:
+      Name: !Join [ '-', [ !Ref AWS::StackName, TaskDefinitionLogGroup ] ]
