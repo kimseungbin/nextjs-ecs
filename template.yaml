@@ -66,7 +66,6 @@ Resources:
         Cluster: !Ref Cluster
         ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
         TaskDefinitionLogGroup: !Ref TaskDefinitionLogGroup
-        ParentStack: !Ref AWS::StackName
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
   YozmService:
     Type: AWS::CloudFormation::Stack
@@ -79,7 +78,6 @@ Resources:
         Cluster: !Ref Cluster
         ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
         TaskDefinitionLogGroup: !Ref TaskDefinitionLogGroup
-        ParentStack: !Ref AWS::StackName
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
   Cluster:
     Type: AWS::ECS::Cluster

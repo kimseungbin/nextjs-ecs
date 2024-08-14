@@ -7,8 +7,6 @@ Parameters:
     Type: String
   TaskDefinitionLogGroup:
     Type: String
-  ParentStack:
-    Type: String
   NetworkStack:
     Type: String
 Resources:
