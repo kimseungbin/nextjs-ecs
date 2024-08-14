@@ -1,13 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Wishket Frontend Service Infrastructure.
 Parameters:
-  Cluster:
-    Type: String
-  ExecutionRoleArn:
-    Type: String
-  TaskDefinitionLogGroup:
-    Type: String
   NetworkStack:
+    Type: String
+  ServiceCommonStack:
     Type: String
 Resources:
   Repository:
@@ -37,7 +33,8 @@ Resources:
       - HttpListener
       - HttpListenerRule
     Properties:
-      Cluster: !Ref Cluster
+      Cluster:
+        Fn::ImportValue: !Sub ${ServiceCommonStack}-${Cluster}
       LaunchType: FARGATE
       DesiredCount: 1
       TaskDefinition: !Ref TaskDefinition
@@ -67,14 +64,17 @@ Resources:
         CpuArchitecture: ARM64
       Cpu: 256
       Memory: 512
-      ExecutionRoleArn: !Ref ExecutionRoleArn
+      ExecutionRoleArn:
+        Fn::ImportValue: !Sub ${ServiceCommonStack}-${ExecutionRoleArn}
       ContainerDefinitions:
         - Name: !Ref AWS::StackName
           Image: !GetAtt [ Repository, RepositoryUri ]
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: !Ref TaskDefinitionLogGroup
+#              awslogs-group: !Ref TaskDefinitionLogGroup
+              awslogs-group:
+                Fn::ImportValue: !Sub ${ServiceCommonStack}-${TaskDefinitionLogGroup}
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: !Ref AWS::StackName
           PortMappings:

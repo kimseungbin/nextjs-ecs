@@ -73,18 +73,15 @@ Resources:
           FileName: service-common.yaml
   AuthService:
     Type: AWS::CloudFormation::Stack
-    DependsOn:
-      - NetworkStack
     Properties:
       TemplateURL: !Sub
         - https://${BucketName}.s3.${AWS::Region}.amazonaws.com/${FileName}
         - BucketName: !Ref NestedStackBucket
           FileName: service.yaml
       Parameters:
-        Cluster: !Ref Cluster
-        ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
-        TaskDefinitionLogGroup: !Ref TaskDefinitionLogGroup
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
+        ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
+
   YozmService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -93,10 +90,8 @@ Resources:
         - BucketName: !Ref NestedStackBucket
           FileName: service.yaml
       Parameters:
-        Cluster: !Ref Cluster
-        ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
-        TaskDefinitionLogGroup: !Ref TaskDefinitionLogGroup
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
+        ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
   WishketService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -105,9 +100,6 @@ Resources:
         - BucketName: !Ref NestedStackBucket
           FileName: service.yaml
       Parameters:
-        Cluster: !Ref Cluster
-        ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
-        TaskDefinitionLogGroup: !Ref TaskDefinitionLogGroup
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
 
@@ -129,27 +121,3 @@ Resources:
         AuthService: !Select [ 1, !Split [ '/', !Ref AuthService ] ]
         YozmService: !Select [ 1, !Split [ '/', !Ref YozmService ] ]
         WishketService: !Select [ 1, !Split [ '/', !Ref WishketService ] ]
-
-
-  #==================================================#
-  # ECS Common                                       #
-  #==================================================#
-
-  Cluster:
-    Type: AWS::ECS::Cluster
-  ExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: ecs-tasks.amazonaws.com
-            Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-  TaskDefinitionLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      RetentionInDays: 7
