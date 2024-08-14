@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Wishket Frontend Auth Service Infrastructure.
+Parameters:
+  Cluster:
+    Type: String
+  ExecutionRoleArn:
+    Type: String
+  TaskDefinitionLogGroup:
+    Type: String
+  ParentStack:
+    Type: String
+  NetworkStack:
+    Type: String
+Resources:
+  Repository:
+    Type: AWS::ECR::Repository
+    Properties:
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep last 3 images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 3
+                },
+                "action": {
+                  "type": "expire"
+                }
+              }
+            ]
+          }
+  Service:
+    Type: AWS::ECS::Service
+    DependsOn:
+      - HttpListener
+      - HttpListenerRule
+    Properties:
+      Cluster: !Ref Cluster
+      LaunchType: FARGATE
+      DesiredCount: 1
+      TaskDefinition: !Ref TaskDefinition
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups:
+            - Fn::ImportValue:
+                !Sub ${NetworkStack}-ServiceSecurityGroup
+          Subnets:
+            - Fn::ImportValue:
+                !Sub ${NetworkStack}-PrivateSubnet1
+            - Fn::ImportValue:
+                !Sub ${NetworkStack}-PrivateSubnet2
+      LoadBalancers:
+        - ContainerName: !Ref AWS::StackName
+          ContainerPort: 3000
+          TargetGroupArn: !Ref TargetGroup
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Ref AWS::StackName
+      RequiresCompatibilities:
+        - FARGATE
+      NetworkMode: awsvpc
+      RuntimePlatform:
+        CpuArchitecture: ARM64
+      Cpu: 256
+      Memory: 512
+      ExecutionRoleArn: !Ref ExecutionRoleArn
+      ContainerDefinitions:
+        - Name: !Ref AWS::StackName
+          Image: !GetAtt [ Repository, RepositoryUri ]
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref TaskDefinitionLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: !Ref AWS::StackName
+          PortMappings:
+            - ContainerPort: 3000
+              HostPort: 3000
+              Protocol: tcp
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Type: application
+      Scheme: internet-facing
+      Subnets:
+        - Fn::ImportValue:
+            !Sub ${NetworkStack}-PublicSubnet1
+        - Fn::ImportValue:
+            !Sub ${NetworkStack}-PublicSubnet2
+      SecurityGroups:
+        - Fn::ImportValue:
+            !Sub ${NetworkStack}-ApplicationLoadBalancerSecurityGroup
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: 3000
+      Protocol: HTTP
+      VpcId:
+        Fn::ImportValue: !Sub ${NetworkStack}-VPC
+      TargetType: ip
+  HttpListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: fixed-response
+          FixedResponseConfig:
+            StatusCode: '403'
+            ContentType: 'text/plain'
+            MessageBody: 'Forbidden direct access to ALB'
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP
+  HttpListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+      Conditions:
+        - Field: http-header
+          # 왜 변수로 처리하나?
+          # Secrets Manager 혹은 Parameter Store 룰 이용해서 업데이트 한다고 하더라도 다음과 같은 문제가 발생
+          # 1. 어차피 CF 나 ALB 에 읽기 권한이 있으면 노출됨
+          # 2. 로깅 시 헤더를 로깅한다면 노출 됨
+          # 3. 값을 로테이션 돌린다고 하더라도 Cfn 업데이트는 별도이므로 구성이 복잡해짐
+          # 4. 아래 내요으로도 한 번 더 보호할 예정
+          # cf. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/restrict-access-to-load-balancer.html#limit-access-to-origin-using-aws-managed-prefixes
+          HttpHeaderConfig:
+            HttpHeaderName: X-Custom-Header # todo parameterize
+            Values:
+              - random-value-1234567890 # todo parameterize
+      ListenerArn: !Ref HttpListener
+      Priority: 1
+Outputs:
+  ApplicationLoadBalancerDNSName:
+    Value: !GetAtt [ ApplicationLoadBalancer, DNSName ]
+    Export:
+      Name: !Join [ '-', [ !Ref AWS::StackName, DNSName ] ]
