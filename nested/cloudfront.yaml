@@ -9,6 +9,8 @@ Parameters:
     Type: String
   AuthService:
     Type: String
+  YozmService:
+    Type: String
 Resources:
   #==================================================#
   # Content Distribution Network                     #
@@ -44,8 +46,8 @@ Resources:
         ViewerCertificate:
           AcmCertificateArn: !Ref CertificateArn
           SslSupportMethod: sni-only
-        #        Logging:
-        #          Bucket: !Ref CloudFrontLoggingBucket
+        Logging:
+          Bucket: !GetAtt [ CloudFrontLoggingBucket, RegionalDomainName ]
         DefaultCacheBehavior:
           # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-caching-optimized
           CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
@@ -89,9 +91,9 @@ Resources:
   #              - ${Project}-${Environment}.wishdev.net
   #              - Project: !Ref Project
   #                Environment: !Ref Environment
-  #  CloudFrontLoggingBucket:
-  #    Type: AWS::S3::Bucket
-  #    Properties:
-  #      OwnershipControls:
-  #        Rules:
-  #          - ObjectOwnership: BucketOwnerPreferred
+  CloudFrontLoggingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerPreferred
