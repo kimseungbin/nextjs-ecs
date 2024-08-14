@@ -4,6 +4,17 @@ Parameters:
   DomainName:
     Type: String
     Default: wishdev.net
+  Project:
+    Type: String
+    Default: fe
+  Environment:
+    Type: String
+    Description: Specifies the deployment environment for the AWS infrastructure.
+    AllowedValues:
+      - test
+      - dev
+      - stage
+      - prod
 Resources:
   SSLCertificate:
     Type: AWS::CertificateManager::Certificate
