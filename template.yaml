@@ -45,7 +45,6 @@ Metadata:
           - CertificationArn
 Resources:
 
-
   #==================================================#
   # Network                                          #
   #==================================================#
@@ -81,7 +80,6 @@ Resources:
       Parameters:
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
-
   YozmService:
     Type: AWS::CloudFormation::Stack
     Properties:
