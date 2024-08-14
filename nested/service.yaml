@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Wishket Frontend Auth Service Infrastructure.
+Description: Wishket Frontend Service Infrastructure.
 Parameters:
   Cluster:
     Type: String
