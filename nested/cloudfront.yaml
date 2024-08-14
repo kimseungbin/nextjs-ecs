@@ -72,7 +72,7 @@ Resources:
             - PATCH
             - DELETE
         CacheBehaviors:
-          - PathPattern: /auth/*
+          - PathPattern: /auth*
             TargetOriginId: Auth
             ViewerProtocolPolicy: redirect-to-https
             CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
@@ -84,7 +84,7 @@ Resources:
               - POST
               - PATCH
               - DELETE
-          - PathPattern: /yozm/*
+          - PathPattern: /yozm*
             TargetOriginId: Yozm
             ViewerProtocolPolicy: redirect-to-https
             CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
