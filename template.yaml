@@ -98,50 +98,36 @@ Resources:
           FileName: network.yaml
       Parameters:
         VpcCidr: !Ref VpcCidr
+  AuthService:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - NetworkStack
+    Properties:
+      TemplateURL: !Sub
+        - https://${BucketName}.s3.${AWS::Region}.amazonaws.com/${FileName}
+        - BucketName: !Ref NestedStackBucket
+          FileName: service.yaml
+      Parameters:
+        Cluster: !Ref Cluster
+        ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
+        TaskDefinitionLogGroup: !Ref TaskDefinitionLogGroup
+        ParentStack: !Ref AWS::StackName
+        NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
+  YozmService:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${BucketName}.s3.${AWS::Region}.amazonaws.com/${FileName}
+        - BucketName: !Ref NestedStackBucket
+          FileName: service.yaml
+      Parameters:
+        Cluster: !Ref Cluster
+        ExecutionRoleArn: !GetAtt [ ExecutionRole, Arn ]
+        TaskDefinitionLogGroup: !Ref TaskDefinitionLogGroup
+        ParentStack: !Ref AWS::StackName
+        NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
   Cluster:
     Type: AWS::ECS::Cluster
-  Service1:
-    Type: AWS::ECS::Service
-    DependsOn:
-      - ApplicationLoadBalancer1
-    Properties:
-      Cluster: !Ref Cluster
-      LaunchType: FARGATE
-      DesiredCount: 1
-      TaskDefinition: !Ref TaskDefinition1
-      NetworkConfiguration:
-        AwsvpcConfiguration:
-          AssignPublicIp: DISABLED
-          SecurityGroups:
-            - !Ref ServiceSecurityGroup
-          Subnets:
-            - !Ref PrivateSubnet1
-            - !Ref PrivateSubnet2
-      LoadBalancers:
-        - ContainerName: nextjs-container-1 # todo parameterize
-          ContainerPort: 3000
-          TargetGroupArn: !Ref TargetGroup1
-  Service2:
-    Type: AWS::ECS::Service
-    DependsOn:
-      - ApplicationLoadBalancer2
-    Properties:
-      Cluster: !Ref Cluster
-      LaunchType: FARGATE
-      DesiredCount: 1
-      TaskDefinition: !Ref TaskDefinition2
-      NetworkConfiguration:
-        AwsvpcConfiguration:
-          AssignPublicIp: DISABLED
-          SecurityGroups:
-            - !Ref ServiceSecurityGroup
-          Subnets:
-            - !Ref PrivateSubnet1
-            - !Ref PrivateSubnet2
-      LoadBalancers:
-        - ContainerName: nextjs-container-2 # todo parameterize
-          ContainerPort: 3000
-          TargetGroupArn: !Ref TargetGroup2
 
   # noinspection YAMLSchemaValidation
   TaskDefinition1:
@@ -251,101 +237,7 @@ Resources:
       SecurityGroupIds:
         - !Ref VpcEndpointSecurityGroup
 
-  #==================================================#
-  # Application Load Balancer                        #
-  ApplicationLoadBalancer1:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Type: application
-      Scheme: internet-facing
-      Subnets:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-      SecurityGroups:
-        - !Ref ApplicationLoadBalancerSecurityGroup
-  ApplicationLoadBalancer2:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Type: application
-      Scheme: internet-facing
-      Subnets:
-        - !Ref PublicSubnet1
-        - !Ref PublicSubnet2
-      SecurityGroups:
-        - !Ref ApplicationLoadBalancerSecurityGroup
-  TargetGroup1:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      Port: 3000
-      Protocol: HTTP
-      VpcId: !Ref VPC
-      TargetType: ip
-  TargetGroup2:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      Port: 3000
-      Protocol: HTTP
-      VpcId: !Ref VPC
-      TargetType: ip
-  HttpListener1:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      DefaultActions:
-        - Type: fixed-response
-          FixedResponseConfig:
-            StatusCode: '403'
-            ContentType: 'text/plain'
-            MessageBody: 'Forbidden'
-      LoadBalancerArn: !Ref ApplicationLoadBalancer1
-      Port: 80
-      Protocol: HTTP
-  HttpListener2:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      DefaultActions:
-        - Type: fixed-response
-          FixedResponseConfig:
-            StatusCode: '403'
-            ContentType: 'text/plain'
-            MessageBody: 'Forbidden'
-      LoadBalancerArn: !Ref ApplicationLoadBalancer2
-      Port: 80
-      Protocol: HTTP
-  HttpListenerRule1:
-    Type: AWS::ElasticLoadBalancingV2::ListenerRule
-    Properties:
-      Actions:
-        - Type: forward
-          TargetGroupArn: !Ref TargetGroup1
-      Conditions:
-        - Field: http-header
-          # 왜 변수로 처리하나?
-          # Secrets Manager 혹은 Parameter Store 룰 이용해서 업데이트 한다고 하더라도 다음과 같은 문제가 발생
-          # 1. 어차피 CF 나 ALB 에 읽기 권한이 있으면 노출됨
-          # 2. 로깅 시 헤더를 로깅한다면 노출 됨
-          # 3. 값을 로테이션 돌린다고 하더라도 Cfn 업데이트는 별도이므로 구성이 복잡해짐
-          # 4. 아래 내요으로도 한 번 더 보호할 예정
-          # cf. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/restrict-access-to-load-balancer.html#limit-access-to-origin-using-aws-managed-prefixes
-          HttpHeaderConfig:
-            HttpHeaderName: X-Custom-Header # todo parameterize
-            Values:
-              - random-value-1234567890 # todo parameterize
-      ListenerArn: !Ref HttpListener1
-      Priority: 1
-  HttpListenerRule2:
-    Type: AWS::ElasticLoadBalancingV2::ListenerRule
-    Properties:
-      Actions:
-        - Type: forward
-          TargetGroupArn: !Ref TargetGroup2
-      Conditions:
-        - Field: http-header
-          HttpHeaderConfig:
-            HttpHeaderName: X-Custom-Header
-            Values:
-              - random-value-1234567890
-      ListenerArn: !Ref HttpListener2
-      Priority: 1
+
   #==================================================#
   # Content Distribution Network                     #
   #==================================================#
