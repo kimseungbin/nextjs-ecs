@@ -33,10 +33,16 @@ Metadata:
           default: General Configuration
         Parameters:
           - Project
+          - Environment
+          - NestedStackBucket
       - Label:
           default: Network Configuration
         Parameters:
           - VpcCidr
+      - Label:
+          default: Certificate Configuration
+        Parameters:
+          - CertificationArn
 Resources:
 
 
