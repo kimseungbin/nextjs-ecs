@@ -140,3 +140,7 @@ Outputs:
     Value: !GetAtt [ ApplicationLoadBalancer, DNSName ]
     Export:
       Name: !Join [ '-', [ !Ref AWS::StackName, DNSName ] ]
+  Service:
+    Value: !GetAtt [ Service, Name ]
+    Export:
+      Name: !Join [ '-', [ !Ref AWS::StackName, Service ] ]

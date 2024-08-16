@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Wishket Frontend CloudWatch Infrastructure.
+Parameters:
+  ServiceCommonStack:
+    Type: String
+  AuthService:
+    Type: String
+Resources:
+  Dashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardBody: !Sub
+        - |
+          {
+            "widgets": [
+              {
+                "type": "metric",
+                "x": 0,
+                "y": 0,
+                "width": 24,
+                "height": 6,
+                "properties": {
+                  "metrics": [
+                    [
+                      "AWS/ECS",
+                      "CPUUtilization",
+                      "ServiceName",
+                      "${AuthService}",
+                      "ClusterName",
+                      "${ClusterName}"],
+                    [
+                      ".",
+                      "MemoryUtilization",
+                      ".",
+                      ".",
+                      ".",
+                      "."]
+                  ],
+                  "period": 300,
+                  "stat": "Average",
+                  "region": "${AWS::Region}",
+                  "title": "Auth Service CPU and Memory Utilization"
+                }
+              }
+            ]
+          }
+        - ClusterName:
+            Fn::ImportValue: !Sub ${ServiceCommonStack}-Cluster
+          AuthService:
+            Fn::ImportValue: !Sub ${AuthService}-Service
