@@ -5,6 +5,10 @@ Parameters:
     Type: String
   AuthService:
     Type: String
+  YozmService:
+    Type: String
+  WishketService:
+    Type: String
 Resources:
   Dashboard:
     Type: AWS::CloudWatch::Dashboard
@@ -21,25 +25,35 @@ Resources:
                 "height": 6,
                 "properties": {
                   "metrics": [
-                    [
-                      "AWS/ECS",
-                      "CPUUtilization",
-                      "ServiceName",
-                      "${AuthService}",
-                      "ClusterName",
-                      "${ClusterName}"],
-                    [
-                      ".",
-                      "MemoryUtilization",
-                      ".",
-                      ".",
-                      ".",
-                      "."]
+                    ["AWS/ECS", "CPUUtilization", "ServiceName", "${AuthService}", "ClusterName", "${ClusterName}"],
+                    [".", "MemoryUtilization", ".", ".", ".", "."],
+                    [".", "CPUUtilization", ".", "${YozmService}", ".", "."],
+                    [".", "MemoryUtilization", ".", ".", ".", "."],
+                    [".", "CPUUtilization", ".", "${WishketService}", ".", "."],
+                    [".", "MemoryUtilization", ".", ".", ".", "."]
                   ],
                   "period": 300,
                   "stat": "Average",
                   "region": "${AWS::Region}",
-                  "title": "Auth Service CPU and Memory Utilization"
+                  "title": "Services CPU and Memory Utilization"
+                }
+              },
+              {
+                "type": "metric",
+                "x": 0,
+                "y": 7,
+                "width": 24,
+                "height": 6,
+                "properties": {
+                  "metrics": [
+                    ["AWS/ECS", "RunningTaskCount", "ServiceName", "${AuthService}", "ClusterName", "${ClusterName}"],
+                    ["AWS/ECS", "RunningTaskCount", "ServiceName", "${YozmService}", "ClusterName", "${ClusterName}"],
+                    ["AWS/ECS", "RunningTaskCount", "ServiceName", "${WishketService}", "ClusterName", "${ClusterName}"]
+                  ],
+                  "period": 300,
+                  "stat": "Average",
+                  "region": "${AWS::Region}",
+                  "title": "Running Task Count per Service"
                 }
               }
             ]
@@ -48,3 +62,7 @@ Resources:
             Fn::ImportValue: !Sub ${ServiceCommonStack}-Cluster
           AuthService:
             Fn::ImportValue: !Sub ${AuthService}-Service
+          YozmService:
+            Fn::ImportValue: !Sub ${YozmService}-Service
+          WishketService:
+            Fn::ImportValue: !Sub ${WishketService}-Service
