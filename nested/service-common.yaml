@@ -19,6 +19,28 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 7
+  AutoScalingRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - application-autoscaling.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies: # todo fine grain the policy
+        - PolicyName: ECSAutoScalingPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - application-autoscaling:*
+                  - cloudwatch:*
+                Resource: '*'
 Outputs:
   Cluster:
     Value: !Ref Cluster
@@ -32,3 +54,7 @@ Outputs:
     Value: !Ref TaskDefinitionLogGroup
     Export:
       Name: !Join [ '-', [ !Ref AWS::StackName, TaskDefinitionLogGroup ] ]
+  AutoScalingRoleArn:
+    Value: !GetAtt [ AutoScalingRole, Arn ]
+    Export:
+      Name: !Join [ '-', [ !Ref AWS::StackName, AutoScalingRoleArn ] ]

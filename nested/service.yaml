@@ -135,6 +135,38 @@ Resources:
               - random-value-1234567890 # todo parameterize
       ListenerArn: !Ref HttpListener
       Priority: 1
+
+  #==================================================#
+  # Auto Scaling                                     #
+  #==================================================#
+
+
+  ScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      MaxCapacity: 5 # todo parameterize if needed
+      MinCapacity: 1
+      ResourceId: !Join
+        - '/'
+        - - service
+          - Fn::ImportValue: !Sub ${ServiceCommonStack}-Cluster
+          - !GetAtt [ Service, Name ]
+      RoleARN:
+        Fn::ImportValue: !Sub ${ServiceCommonStack}-AutoScalingRoleArn
+      ScalableDimension: ecs:service:DesiredCount
+      ServiceNamespace: ecs
+  ScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Ref AWS::StackName
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref ScalableTarget
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: ECSServiceAverageCPUUtilization
+        TargetValue: 50.0
+        ScaleInCooldown: 60
+        ScaleOutCooldown: 60
 Outputs:
   ApplicationLoadBalancerDNSName:
     Value: !GetAtt [ ApplicationLoadBalancer, DNSName ]
