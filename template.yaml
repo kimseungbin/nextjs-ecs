@@ -134,3 +134,5 @@ Resources:
       Parameters:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         AuthService: !Select [ 1, !Split [ '/', !Ref AuthService ] ]
+        YozmService: !Select [ 1, !Split [ '/', !Ref YozmService ] ]
+        WishketService: !Select [ 1, !Split [ '/', !Ref WishketService ] ]
