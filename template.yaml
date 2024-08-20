@@ -100,6 +100,17 @@ Resources:
       Parameters:
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
+  WebinarService:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${BucketName}.s3.${AWS::Region}.amazonaws.com/${FileName}
+        - BucketName: !Ref NestedStackBucket
+          FileName: service.yaml
+      Parameters:
+        NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
+        ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
+        HealthCheckPath: /api/health # customization
 
   #==================================================#
   # CloudFront Distribution                          #

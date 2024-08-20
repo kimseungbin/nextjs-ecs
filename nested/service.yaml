@@ -5,6 +5,9 @@ Parameters:
     Type: String
   ServiceCommonStack:
     Type: String
+  HealthCheckPath:
+    Type: String
+    Default: / # todo change the default value to /api/health once all services are no longer a mock.
 Resources:
   Repository:
     Type: AWS::ECR::Repository
@@ -102,6 +105,7 @@ Resources:
       VpcId:
         Fn::ImportValue: !Sub ${NetworkStack}-VPC
       TargetType: ip
+      HealthCheckPath: !Ref HealthCheckPath
   HttpListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
