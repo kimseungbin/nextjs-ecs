@@ -175,6 +175,37 @@ Resources:
         TargetValue: 50.0
         ScaleInCooldown: 60
         ScaleOutCooldown: 60
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: Temp # todo use service name
+        Origins:
+          - Id: ALB
+            DomainName: !GetAtt [ ApplicationLoadBalancer, DNSName ]
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
+            OriginCustomHeaders:
+              - HeaderName: X-Custom-Header
+                HeaderValue: random-value-1234567890
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CertificationArn
+          SslSupportMethod: sni-only
+        # Logging
+        DefaultCacheBehavior:
+        # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-caching-optimized
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # todo update
+          TargetOriginId: ALB
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+            - PUT
+            - POST
+            - PATCH
+            - DELETE
 Outputs:
   ApplicationLoadBalancerDNSName:
     Value: !GetAtt [ ApplicationLoadBalancer, DNSName ]
