@@ -91,6 +91,7 @@ Resources:
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
+        CertificationArn: !Ref CertificationArn
   YozmService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -102,6 +103,7 @@ Resources:
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
+        CertificationArn: !Ref CertificationArn
   WishketService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -113,6 +115,7 @@ Resources:
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
+        CertificationArn: !Ref CertificationArn
   WebinarService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -124,6 +127,7 @@ Resources:
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
+        CertificationArn: !Ref CertificationArn
         HealthCheckPath: /api/health # customization
 
   #==================================================#
