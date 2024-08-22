@@ -92,7 +92,7 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
-        CloudFrontLoggingBucketArn: !GetAtt [ CloudFrontLoggingBucket, Arn ]
+        CloudFrontLoggingBucketDomainName: !GetAtt [ CloudFrontLoggingBucket, RegionalDomainName ]
   YozmService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -105,7 +105,7 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
-        CloudFrontLoggingBucketArn: !GetAtt [ CloudFrontLoggingBucket, Arn ]
+        CloudFrontLoggingBucketDomainName: !GetAtt [ CloudFrontLoggingBucket, RegionalDomainName ]
   WishketService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -118,7 +118,7 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
-        CloudFrontLoggingBucketArn: !GetAtt [ CloudFrontLoggingBucket, Arn ]
+        CloudFrontLoggingBucketDomainName: !GetAtt [ CloudFrontLoggingBucket, RegionalDomainName ]
   WebinarService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -131,7 +131,7 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
-        CloudFrontLoggingBucketArn: !GetAtt [ CloudFrontLoggingBucket, Arn ]
+        CloudFrontLoggingBucketDomainName: !GetAtt [ CloudFrontLoggingBucket, RegionalDomainName ]
         HealthCheckPath: /api/health # customization
 
   #==================================================#
