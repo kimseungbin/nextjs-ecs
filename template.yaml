@@ -92,6 +92,7 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
+        CloudFrontLoggingBucketArn: !GetAtt [ CloudFrontLoggingBucket, Arn ]
   YozmService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -104,6 +105,7 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
+        CloudFrontLoggingBucketArn: !GetAtt [ CloudFrontLoggingBucket, Arn ]
   WishketService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -116,6 +118,7 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
+        CloudFrontLoggingBucketArn: !GetAtt [ CloudFrontLoggingBucket, Arn ]
   WebinarService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -128,26 +131,19 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
+        CloudFrontLoggingBucketArn: !GetAtt [ CloudFrontLoggingBucket, Arn ]
         HealthCheckPath: /api/health # customization
 
   #==================================================#
   # CloudFront Distribution                          #
   #==================================================#
 
-  DistributionStack:
-    Type: AWS::CloudFormation::Stack
+  CloudFrontLoggingBucket:
+    Type: AWS::S3::Bucket
     Properties:
-      TemplateURL: !Sub
-        - https://${BucketName}.s3.${AWS::Region}.amazonaws.com/${FileName}
-        - BucketName: !Ref NestedStackBucket
-          FileName: cloudfront.yaml
-      Parameters:
-        Project: !Ref Project
-        Environment: !Ref Environment
-        CertificateArn: !Ref CertificationArn
-        AuthService: !Select [ 1, !Split [ '/', !Ref AuthService ] ]
-        YozmService: !Select [ 1, !Split [ '/', !Ref YozmService ] ]
-        WishketService: !Select [ 1, !Split [ '/', !Ref WishketService ] ]
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerPreferred
 
   #==================================================#
   # CloudWatch                                       #

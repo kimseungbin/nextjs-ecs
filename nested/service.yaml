@@ -12,6 +12,8 @@ Parameters:
     Type: String
   CertificationArn:
     Type: String
+  CloudFrontLoggingBucketArn:
+    Type: String
 Resources:
   Repository:
     Type: AWS::ECR::Repository
