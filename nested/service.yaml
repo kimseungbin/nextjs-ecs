@@ -12,8 +12,6 @@ Parameters:
     Type: String
   CertificationArn:
     Type: String
-  CloudFrontLoggingBucketDomainName:
-    Type: String
   Subdomain:
     Type: String
 Resources:
@@ -197,7 +195,8 @@ Resources:
           AcmCertificateArn: !Ref CertificationArn
           SslSupportMethod: sni-only
         Logging:
-          Bucket: !Ref CloudFrontLoggingBucketDomainName
+          Bucket:
+            Fn::ImportValue: !Sub ${ServiceCommonStack}-CloudFrontLoggingBucketDomainName
           Prefix: !Ref AWS::StackName
         DefaultCacheBehavior:
         # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-caching-optimized

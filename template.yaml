@@ -92,7 +92,6 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
-        CloudFrontLoggingBucketDomainName: !GetAtt [ CloudFrontLoggingBucket, RegionalDomainName ]
         Subdomain: auth
   YozmService:
     Type: AWS::CloudFormation::Stack
@@ -106,7 +105,6 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
-        CloudFrontLoggingBucketDomainName: !GetAtt [ CloudFrontLoggingBucket, RegionalDomainName ]
         Subdomain: yozm
   WishketService:
     Type: AWS::CloudFormation::Stack
@@ -120,7 +118,6 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
-        CloudFrontLoggingBucketDomainName: !GetAtt [ CloudFrontLoggingBucket, RegionalDomainName ]
         Subdomain: wishket
   WebinarService:
     Type: AWS::CloudFormation::Stack
@@ -134,20 +131,10 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
-        CloudFrontLoggingBucketDomainName: !GetAtt [ CloudFrontLoggingBucket, RegionalDomainName ]
         Subdomain: webinar
         HealthCheckPath: /api/health # customization
 
-  #==================================================#
-  # CloudFront Distribution                          #
-  #==================================================#
 
-  CloudFrontLoggingBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      OwnershipControls:
-        Rules:
-          - ObjectOwnership: BucketOwnerPreferred
 
   #==================================================#
   # CloudWatch                                       #

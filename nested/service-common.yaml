@@ -41,6 +41,17 @@ Resources:
                   - application-autoscaling:*
                   - cloudwatch:*
                 Resource: '*'
+  #==================================================#
+  # CloudFront Distribution                          #
+  #==================================================#
+
+  CloudFrontLoggingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerPreferred
+
 Outputs:
   Cluster:
     Value: !Ref Cluster
@@ -58,3 +69,7 @@ Outputs:
     Value: !GetAtt [ AutoScalingRole, Arn ]
     Export:
       Name: !Join [ '-', [ !Ref AWS::StackName, AutoScalingRoleArn ] ]
+  CloudFrontLoggingBucketDomainName:
+    Value: !GetAtt [ CloudFrontLoggingBucket, RegionalDomainName ]
+    Export:
+      Name: !Join [ '-', [ !Ref AWS::StackName, CloudFrontLoggingBucketDomainName ] ]
