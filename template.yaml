@@ -26,6 +26,16 @@ Parameters:
   NestedStackBucket:
     Type: String
     Description: The name of Bucket holding nested stack templates.
+Mappings:
+  EnvironmentToSubdomainSuffix:
+    test:
+      Suffix: '-test'
+    dev:
+      Suffix: '-dev'
+    stage:
+      Suffix: ''
+    prod:
+      Suffix: ''
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -80,6 +90,7 @@ Resources:
       Parameters:
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
+        SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
   YozmService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -90,6 +101,7 @@ Resources:
       Parameters:
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
+        SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
   WishketService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -100,6 +112,7 @@ Resources:
       Parameters:
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
+        SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
   WebinarService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -110,6 +123,7 @@ Resources:
       Parameters:
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
+        SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         HealthCheckPath: /api/health # customization
 
   #==================================================#
