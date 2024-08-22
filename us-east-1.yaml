@@ -4,33 +4,15 @@ Parameters:
   DomainName:
     Type: String
     Default: wishdev.net
-  Project:
-    Type: String
-    Default: fe
-  Environment:
-    Type: String
-    Description: Specifies the deployment environment for the AWS infrastructure.
-    AllowedValues:
-      - test
-      - dev
-      - stage
-      - prod
+    Description: Specifies the root domain for whi a wildcard certificate will be issued, covering all direct subdomains. (e.g. *.wishdev.net)
 Resources:
   SSLCertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
-      DomainName:
-        Fn::If:
-          - IsProd
-          - !Sub ${Project}.${DomainName}
-          - !Sub ${Project}-${Environment}.${DomainName}
+      DomainName: !Join [ '.', [ '*', !Ref DomainName ] ]
       ValidationMethod: DNS
       DomainValidationOptions:
-        - DomainName:
-            Fn::If:
-              - IsProd
-              - !Sub ${Project}.${DomainName}
-              - !Sub ${Project}-${Environment}.${DomainName}
+        - DomainName: !Join [ '.', [ '*', !Ref DomainName ] ]
           ValidationDomain: !Ref DomainName
 Outputs:
   CertificateArn:
@@ -38,6 +20,3 @@ Outputs:
     Value: !Ref SSLCertificate
     Export:
       Name: CertificateArn
-Conditions:
-  IsProd:
-    Fn::Equals: [ !Ref Environment, "prod" ]
