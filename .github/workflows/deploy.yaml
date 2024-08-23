@@ -48,16 +48,11 @@ jobs:
         if: ${{ matrix.if_condition }}
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-      - name: Debug ECR_REGISTRY
-        if: ${{ matrix.if_condition }}
-        run: echo "ECR_REGISTRY is... $ECR_REGISTRY"
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       - name: Build, tag, and push image to Amazon ECR
         if: ${{ matrix.if_condition }}
         id: build-image
         env:
-          ECR_REGISTRY: ${{ steps.login-cer.outputs.registry }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $ECR_REGISTRY/${{ matrix.ecr_repository }}:$IMAGE_TAG .
