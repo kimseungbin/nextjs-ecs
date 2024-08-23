@@ -23,9 +23,15 @@ Parameters:
     Description: |
       The ARN of the AWS Certificate Manager (ACM) certificate to use for SSL/TLS termination with the CloudFront distribution.
       This should be the ARN of a certificate that covers the domain or subdomain served by CloudFront.
+  WebACL:
+    Type: String
+    Description: ARN of WebACL created in us-east-1
   NestedStackBucket:
     Type: String
     Description: The name of Bucket holding nested stack templates.
+  RootDomainName:
+    Type: String
+    Default: wishdev.net
 Mappings:
   EnvironmentToSubdomainSuffix:
     test:
@@ -92,8 +98,9 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
+        RootDomain: !Ref RootDomainName
         Subdomain: !Sub
-          - webinar${SubdomainSuffix}
+          - auth${SubdomainSuffix}
           - SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
   YozmService:
     Type: AWS::CloudFormation::Stack
@@ -110,6 +117,7 @@ Resources:
         Subdomain: !Sub
           - webinar${SubdomainSuffix}
           - SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
+        HealthCheckPath: /api/health # customization
   WishketService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -122,8 +130,9 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
+        RootDomain: !Ref RootDomainName
         Subdomain: !Sub
-          - webinar${SubdomainSuffix}
+          - wishket${SubdomainSuffix}
           - SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
   WebinarService:
     Type: AWS::CloudFormation::Stack
@@ -137,6 +146,7 @@ Resources:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
+        RootDomain: !Ref RootDomainName
         Subdomain: !Sub
           - webinar${SubdomainSuffix}
           - SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
