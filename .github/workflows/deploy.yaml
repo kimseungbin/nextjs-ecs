@@ -45,6 +45,8 @@ jobs:
           context: ./test-app
           push: true
           tags: ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ github.sha }}
+          cache-to: type=gha
+          cache-from: type=gha, mode=max
       - name: Download task definition
         env:
           TASK_DEFINITION_FAMILY: ${{ vars.TASK_DEFINITION_FAMILY }}
