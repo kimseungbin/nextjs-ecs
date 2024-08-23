@@ -192,6 +192,8 @@ Resources:
             OriginCustomHeaders:
               - HeaderName: X-Custom-Header
                 HeaderValue: random-value-1234567890
+            # OriginShield
+            # cf. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/origin-shield.html
         ViewerCertificate:
           AcmCertificateArn: !Ref CertificationArn
           SslSupportMethod: sni-only
