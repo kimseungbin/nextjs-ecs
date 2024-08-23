@@ -20,18 +20,13 @@ jobs:
     environment: ${{ github.ref == 'refs/heads/main' && 'stage' || github.ref == 'refs/heads/release' && 'production' }}
     strategy:
       matrix:
-        environment: [ stage, production ]
+        environment: [ stage  ]
         include:
           - branch: main
             environment: stage
             ecs_service: ${{ vars.ECS_SERVICE_STAGE }}
             ecr_repository: ${{ vars.ECR_REPOSITORY_STAGE }}
             if_condition: ${{ github.ref == 'refs/heads/main' }}
-          - branch: release
-            environment: production
-            ecs_service: ${{ vars.ECS_SERVICE }}
-            ecr_repository: ${{ vars.ECR_REPOSITORY }}
-            if_condition: ${{ github.ref == 'refs/heads/release' }}
     steps:
       - name: Checkout
         if: ${{ matrix.if_condition }}
