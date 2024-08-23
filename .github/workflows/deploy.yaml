@@ -1,0 +1,37 @@
+name: Deploy to ECS Fargate
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - master
+      - release
+permissions:
+  contents: read
+  id-token: write # Required to fetch OpenID Connect token.
+env:
+  ECR_REPOSITORY:
+jobs:
+  deploy:
+    name: Deploy to ECS Fargate with Canary Deployment
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    # replace branch name
+    environment: ${{ github.ref == 'refs/heads/main' && 'stage' || github.ref == 'refs/heads/release' && 'production' }}
+    strategy:
+      matrix:
+        environment: [ stage, production ]
+        include:
+          - branch: master
+            environment: stage
+            ecs_service: ${{ vars.ECS_SERVICE_STAGE }}
+            ecr_repository: ${{ vars.ECR_REPOSITORY }}
+            task_definition_family: ${{ vars.TASK_DEFINITION_FAMILY_STAGE }}
+          - branch: release
+            environment: production
+            ecs_service: ${{ vars.ECS_SERVICE }}
+            ecr_repository: ${{ vars.ECR_REPOSITORY }}
+            task_definition_family: : ${{ vars.TASK_DEFINITION_FAMILY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
