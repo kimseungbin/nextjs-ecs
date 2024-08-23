@@ -26,13 +26,11 @@ jobs:
             environment: stage
             ecs_service: ${{ vars.ECS_SERVICE_STAGE }}
             ecr_repository: ${{ vars.ECR_REPOSITORY_STAGE }}
-            task_definition_family: ${{ vars.TASK_DEFINITION_FAMILY_STAGE }}
             if_condition: ${{ github.ref == 'refs/heads/main' }}
           - branch: release
             environment: production
             ecs_service: ${{ vars.ECS_SERVICE }}
             ecr_repository: ${{ vars.ECR_REPOSITORY }}
-            task_definition_family: ${{ vars.TASK_DEFINITION_FAMILY }}
             if_condition: ${{ github.ref == 'refs/heads/release' }}
     steps:
       - name: Checkout
@@ -57,3 +55,9 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/${{ matrix.ecr_repository }}:$IMAGE_TAG ./test-app
           docker push $ECR_REGISTRY/${{ matrix.ecr_repository }}:$IMAGE_TAG
+      - name: Download task definition
+        if: ${{ matrix.if_condition }}
+        run: |
+          aws ecs describe-task-definition \
+          --task-definition $TASK_DEFINITION_FAMILY
+          --query taskDefinition > task-definition.json
