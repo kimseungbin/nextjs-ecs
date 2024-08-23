@@ -27,19 +27,24 @@ jobs:
             ecs_service: ${{ vars.ECS_SERVICE_STAGE }}
             ecr_repository: ${{ vars.ECR_REPOSITORY }}
             task_definition_family: ${{ vars.TASK_DEFINITION_FAMILY_STAGE }}
+            if_condition: ${{ github.ref == 'refs/heads/main' }}
           - branch: release
             environment: production
             ecs_service: ${{ vars.ECS_SERVICE }}
             ecr_repository: ${{ vars.ECR_REPOSITORY }}
             task_definition_family: ${{ vars.TASK_DEFINITION_FAMILY }}
+            if_condition: ${{ github.ref == 'refs/heads/release' }}
     steps:
       - name: Checkout
+        if: ${{ matrix.if_condition }}
         uses: actions/checkout@v4
       - name: Configure AWS credentials
+        if: ${{ matrix.if_condition }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.OIDC_ARN }}
           aws-region: ap-northeast-2
       - name: Login to Amazon ECR
+        if: ${{ matrix.if_condition }}
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
