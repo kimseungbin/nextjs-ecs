@@ -55,4 +55,11 @@ jobs:
           task-definition-family: ${{ vars.TASK_DEFINITION_FAMILY }}
           image: ${{ steps.build-image.outputs.imageid }}
           container-name: ${{ vars.CONTAINER_NAME }}
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
+          service: ${{ vars.ECS_SERVICE }}
+          cluster: ${{ vars.ECS_CLUSTER }}
+          wait-for-service-stability: true
 # invalidation
