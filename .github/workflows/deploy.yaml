@@ -25,7 +25,7 @@ jobs:
           - branch: main
             environment: stage
             ecs_service: ${{ vars.ECS_SERVICE_STAGE }}
-            ecr_repository: ${{ vars.ECR_REPOSITORY }}
+            ecr_repository: ${{ vars.ECR_REPOSITORY_STAGE }}
             task_definition_family: ${{ vars.TASK_DEFINITION_FAMILY_STAGE }}
             if_condition: ${{ github.ref == 'refs/heads/main' }}
           - branch: release
@@ -48,3 +48,11 @@ jobs:
         if: ${{ matrix.if_condition }}
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-cer.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/${{ matrix.ecr_repository }}:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/${{ matrix.ecr_repository }}:$IMAGE_TAG
