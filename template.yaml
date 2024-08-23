@@ -102,21 +102,6 @@ Resources:
         Subdomain: !Sub
           - auth${SubdomainSuffix}
           - SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
-  YozmService:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub
-        - https://${BucketName}.s3.${AWS::Region}.amazonaws.com/${FileName}
-        - BucketName: !Ref NestedStackBucket
-          FileName: service.yaml
-      Parameters:
-        NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
-        ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
-        SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
-        CertificationArn: !Ref CertificationArn
-        Subdomain: !Sub
-          - webinar${SubdomainSuffix}
-          - SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         HealthCheckPath: /api/health # customization
   WishketService:
     Type: AWS::CloudFormation::Stack
