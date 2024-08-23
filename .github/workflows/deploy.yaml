@@ -13,7 +13,7 @@ env:
   ECR_REPOSITORY:
 jobs:
   deploy:
-    name: Deploy to ECS Fargate with Canary Deployment
+    name: Deploy to ECS Fargate
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     # replace branch name
@@ -52,7 +52,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition-family: ${{ vars.TASK_DEFINITION_FAMILY }}
-          image: ${{ steps.build-image.outputs.imageid }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSIOTRY }}:${{ github.sha }}
           container-name: ${{ vars.CONTAINER_NAME }}
       - name: Deploy to Amazon ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
@@ -61,4 +61,10 @@ jobs:
           service: ${{ vars.ECS_SERVICE }}
           cluster: ${{ vars.ECS_CLUSTER }}
           wait-for-service-stability: true
-# invalidation
+      - name: Invalidate CloudFront Distribution
+        env:
+          DISTRIBUTION_ID: ${{ vars.DISTRIBUTION_ID }}
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id $DISTRIBUTION_ID \
+            --path "/*"
