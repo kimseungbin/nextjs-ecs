@@ -54,5 +54,5 @@ jobs:
         if: ${{ matrix.if_condition }}
         run: |
           aws ecs describe-task-definition \
-            --task-definition ${{ TASK_DEFINITION_FAMILY }} \
+            --task-definition ${{ env.TASK_DEFINITION_FAMILY }} \
             --query taskDefinition > task-definition.json
