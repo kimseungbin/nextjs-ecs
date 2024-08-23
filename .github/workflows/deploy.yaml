@@ -53,4 +53,5 @@ jobs:
         with:
           task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
           image: ${{ steps.build-image.outputs.image }}
+          container-name: fe-stage-ServiceCommonStack-1FXX691KMOCJA
 # invalidation
