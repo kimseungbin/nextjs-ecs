@@ -5,9 +5,9 @@ Parameters:
     Type: String
   AuthService:
     Type: String
-  YozmService:
-    Type: String
   WishketService:
+    Type: String
+  WebinarService:
     Type: String
 Resources:
   Dashboard:
@@ -27,9 +27,9 @@ Resources:
                   "metrics": [
                     ["AWS/ECS", "CPUUtilization", "ServiceName", "${AuthService}", "ClusterName", "${ClusterName}"],
                     [".", "MemoryUtilization", ".", ".", ".", "."],
-                    [".", "CPUUtilization", ".", "${YozmService}", ".", "."],
-                    [".", "MemoryUtilization", ".", ".", ".", "."],
                     [".", "CPUUtilization", ".", "${WishketService}", ".", "."],
+                    [".", "MemoryUtilization", ".", ".", ".", "."]
+                    [".", "CPUUtilization", ".", "${WebinarService}", ".", "."],
                     [".", "MemoryUtilization", ".", ".", ".", "."]
                   ],
                   "period": 300,
@@ -47,8 +47,8 @@ Resources:
                 "properties": {
                   "metrics": [
                     ["AWS/ECS", "RunningTaskCount", "ServiceName", "${AuthService}", "ClusterName", "${ClusterName}"],
-                    ["AWS/ECS", "RunningTaskCount", "ServiceName", "${YozmService}", "ClusterName", "${ClusterName}"],
                     ["AWS/ECS", "RunningTaskCount", "ServiceName", "${WishketService}", "ClusterName", "${ClusterName}"]
+                    ["AWS/ECS", "RunningTaskCount", "ServiceName", "${WebinarService}", "ClusterName", "${ClusterName}"]
                   ],
                   "period": 300,
                   "stat": "Average",
@@ -62,7 +62,7 @@ Resources:
             Fn::ImportValue: !Sub ${ServiceCommonStack}-Cluster
           AuthService:
             Fn::ImportValue: !Sub ${AuthService}-Service
-          YozmService:
-            Fn::ImportValue: !Sub ${YozmService}-Service
           WishketService:
             Fn::ImportValue: !Sub ${WishketService}-Service
+          WebinarSErvice:
+            Fn::ImportValue: !Sub ${WebinarService}-Service
