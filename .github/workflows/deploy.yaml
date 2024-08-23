@@ -53,6 +53,7 @@ jobs:
       - name: Download task definition
         if: ${{ matrix.if_condition }}
         run: |
+          echo "Task Definition Family $TASK_DEFINITION_FAMILY"
           aws ecs describe-task-definition \
             --task-definition ${{ env.TASK_DEFINITION_FAMILY }} \
             --query taskDefinition > task-definition.json
