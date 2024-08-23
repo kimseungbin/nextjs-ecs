@@ -40,7 +40,7 @@ jobs:
 #          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       - name: Build and push image to Amazon ECR
         id: build-image
-        uses: docker/build-push-action
+        uses: docker/build-push-action@v6
         with:
           context: ./test-app
           push: true
