@@ -31,7 +31,7 @@ jobs:
             environment: production
             ecs_service: ${{ vars.ECS_SERVICE }}
             ecr_repository: ${{ vars.ECR_REPOSITORY }}
-            task_definition_family: : ${{ vars.TASK_DEFINITION_FAMILY }}
+            task_definition_family: ${{ vars.TASK_DEFINITION_FAMILY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
