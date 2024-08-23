@@ -22,7 +22,7 @@ jobs:
       matrix:
         environment: [ stage, production ]
         include:
-          - branch: master
+          - branch: main
             environment: stage
             ecs_service: ${{ vars.ECS_SERVICE_STAGE }}
             ecr_repository: ${{ vars.ECR_REPOSITORY }}
@@ -40,3 +40,6 @@ jobs:
         with:
           role-to-assume: ${{ vars.OIDC_ARN }}
           aws-region: ap-northeast-2
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
