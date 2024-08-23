@@ -52,7 +52,7 @@ jobs:
         id: render-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ steps.render-task-definition.outputs.task-definition }}
+          task-definition-family: ${{ vars.TASK_DEFINITION_FAMILY }}
           image: ${{ steps.build-image.outputs.imageid }}
-          container-name: fe-stage-ServiceCommonStack-1FXX691KMOCJA
+          container-name: ${{ vars.CONTAINER_NAME }}
 # invalidation
