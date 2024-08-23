@@ -113,6 +113,8 @@ Resources:
         Fn::ImportValue: !Sub ${NetworkStack}-VPC
       TargetType: ip
       HealthCheckPath: !Ref HealthCheckPath
+      HealthCheckIntervalSeconds: 5
+      HealthyThresholdCount: 2
   HttpListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
