@@ -16,6 +16,12 @@ Parameters:
     Type: String
   Subdomain:
     Type: String
+  Cpu:
+    Type: String
+    Default: 256
+  Memory:
+    Type: String
+    Default: 512
 Resources:
   Repository:
     Type: AWS::ECR::Repository
@@ -73,8 +79,8 @@ Resources:
       NetworkMode: awsvpc
       RuntimePlatform:
         CpuArchitecture: ARM64
-      Cpu: 256
-      Memory: 512
+      Cpu: !Ref Cpu
+      Memory: !Ref Memory
       ExecutionRoleArn:
         Fn::ImportValue: !Sub ${ServiceCommonStack}-ExecutionRoleArn
       ContainerDefinitions:
@@ -114,7 +120,7 @@ Resources:
       TargetType: ip
       HealthCheckPath: !Ref HealthCheckPath
       HealthCheckIntervalSeconds: 10
-      HealthyThresholdCount: 2
+      HealthyThresholdCount: 1
       HealthCheckTimeoutSeconds: 9
   HttpListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
