@@ -120,7 +120,7 @@ Resources:
       TargetType: ip
       HealthCheckPath: !Ref HealthCheckPath
       HealthCheckIntervalSeconds: 10
-      HealthyThresholdCount: 1
+      HealthyThresholdCount: 2
       HealthCheckTimeoutSeconds: 9
   HttpListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
