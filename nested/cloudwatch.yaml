@@ -28,7 +28,7 @@ Resources:
                     ["AWS/ECS", "CPUUtilization", "ServiceName", "${AuthService}", "ClusterName", "${ClusterName}"],
                     [".", "MemoryUtilization", ".", ".", ".", "."],
                     [".", "CPUUtilization", ".", "${WishketService}", ".", "."],
-                    [".", "MemoryUtilization", ".", ".", ".", "."]
+                    [".", "MemoryUtilization", ".", ".", ".", "."],
                     [".", "CPUUtilization", ".", "${WebinarService}", ".", "."],
                     [".", "MemoryUtilization", ".", ".", ".", "."]
                   ],
@@ -47,7 +47,7 @@ Resources:
                 "properties": {
                   "metrics": [
                     ["AWS/ECS", "RunningTaskCount", "ServiceName", "${AuthService}", "ClusterName", "${ClusterName}"],
-                    ["AWS/ECS", "RunningTaskCount", "ServiceName", "${WishketService}", "ClusterName", "${ClusterName}"]
+                    ["AWS/ECS", "RunningTaskCount", "ServiceName", "${WishketService}", "ClusterName", "${ClusterName}"],
                     ["AWS/ECS", "RunningTaskCount", "ServiceName", "${WebinarService}", "ClusterName", "${ClusterName}"]
                   ],
                   "period": 300,
