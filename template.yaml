@@ -31,13 +31,13 @@ Parameters:
     Description: The name of Bucket holding nested stack templates.
   RootDomainName:
     Type: String
-    Default: wishdev.net
+    Default: dev.wishdev.net
 Mappings:
   EnvironmentToSubdomainSuffix:
     test:
       Suffix: '-test'
     dev:
-      Suffix: '-dev'
+      Suffix: ''
     stage:
       Suffix: ''
     prod:
