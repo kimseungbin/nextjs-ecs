@@ -22,6 +22,9 @@ Parameters:
   Memory:
     Type: String
     Default: 512
+  MinCapacity:
+    Type: Number
+    Default: 1
 Resources:
   Repository:
     Type: AWS::ECR::Repository
@@ -165,7 +168,7 @@ Resources:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
     Properties:
       MaxCapacity: 5 # todo parameterize if needed
-      MinCapacity: 1
+      MinCapacity: !Ref MinCapacity
       ResourceId: !Join
         - '/'
         - - service

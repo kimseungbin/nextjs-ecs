@@ -32,6 +32,12 @@ Parameters:
   RootDomainName:
     Type: String
     Default: dev.wishdev.net
+  MinCapacity:
+    Type: Number
+    Default: 1
+    Description: |
+      The minimum number of instances or tasks that will always be running in the Auto Scaling group or ECS service, even when there is no load.
+      Set this at least 2 in production.
 Mappings:
   EnvironmentToSubdomainSuffix:
     test:
@@ -105,6 +111,7 @@ Resources:
         HealthCheckPath: /api/health # customization
         Cpu: 512
         Memory: 1024
+        MinCapacity: !Ref MinCapacity
   WebinarService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -122,6 +129,7 @@ Resources:
           - webinar${SubdomainSuffix}
           - SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         HealthCheckPath: /api/health # customization
+        MinCapacity: !Ref MinCapacity
 
 
 
