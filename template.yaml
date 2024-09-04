@@ -105,22 +105,6 @@ Resources:
         HealthCheckPath: /api/health # customization
         Cpu: 512
         Memory: 1024
-  WishketService:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub
-        - https://${BucketName}.s3.${AWS::Region}.amazonaws.com/${FileName}
-        - BucketName: !Ref NestedStackBucket
-          FileName: service.yaml
-      Parameters:
-        NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
-        ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
-        SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
-        CertificationArn: !Ref CertificationArn
-        RootDomain: !Ref RootDomainName
-        Subdomain: !Sub
-          - wishket${SubdomainSuffix}
-          - SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
   WebinarService:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -155,5 +139,4 @@ Resources:
       Parameters:
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
         AuthService: !Select [ 1, !Split [ '/', !Ref AuthService ] ]
-        WishketService: !Select [ 1, !Split [ '/', !Ref WishketService ] ]
         WebinarService: !Select [ 1, !Split [ '/', !Ref WebinarService ] ]

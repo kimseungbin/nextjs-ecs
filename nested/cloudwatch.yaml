@@ -5,8 +5,6 @@ Parameters:
     Type: String
   AuthService:
     Type: String
-  WishketService:
-    Type: String
   WebinarService:
     Type: String
 Resources:
@@ -27,8 +25,6 @@ Resources:
                   "metrics": [
                     ["AWS/ECS", "CPUUtilization", "ServiceName", "${AuthService}", "ClusterName", "${ClusterName}"],
                     [".", "MemoryUtilization", ".", ".", ".", "."],
-                    [".", "CPUUtilization", ".", "${WishketService}", ".", "."],
-                    [".", "MemoryUtilization", ".", ".", ".", "."],
                     [".", "CPUUtilization", ".", "${WebinarService}", ".", "."],
                     [".", "MemoryUtilization", ".", ".", ".", "."]
                   ],
@@ -47,7 +43,6 @@ Resources:
                 "properties": {
                   "metrics": [
                     ["AWS/ECS", "RunningTaskCount", "ServiceName", "${AuthService}", "ClusterName", "${ClusterName}"],
-                    ["AWS/ECS", "RunningTaskCount", "ServiceName", "${WishketService}", "ClusterName", "${ClusterName}"],
                     ["AWS/ECS", "RunningTaskCount", "ServiceName", "${WebinarService}", "ClusterName", "${ClusterName}"]
                   ],
                   "period": 300,
@@ -62,7 +57,5 @@ Resources:
             Fn::ImportValue: !Sub ${ServiceCommonStack}-Cluster
           AuthService:
             Fn::ImportValue: !Sub ${AuthService}-Service
-          WishketService:
-            Fn::ImportValue: !Sub ${WishketService}-Service
           WebinarSErvice:
             Fn::ImportValue: !Sub ${WebinarService}-Service
