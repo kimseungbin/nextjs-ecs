@@ -38,16 +38,6 @@ Parameters:
     Description: |
       The minimum number of instances or tasks that will always be running in the Auto Scaling group or ECS service, even when there is no load.
       Set this at least 2 in production.
-Mappings:
-  EnvironmentToSubdomainSuffix:
-    test:
-      Suffix: '-test'
-    dev:
-      Suffix: ''
-    stage:
-      Suffix: ''
-    prod:
-      Suffix: ''
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -102,12 +92,9 @@ Resources:
       Parameters:
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
-        SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
         RootDomain: !Ref RootDomainName
-        Subdomain: !Sub
-          - auth${SubdomainSuffix}
-          - SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
+        Subdomain: auth
         HealthCheckPath: /api/health # customization
         Cpu: 512
         Memory: 1024
@@ -122,12 +109,9 @@ Resources:
       Parameters:
         NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
         ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
-        SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
         CertificationArn: !Ref CertificationArn
         RootDomain: !Ref RootDomainName
-        Subdomain: !Sub
-          - webinar${SubdomainSuffix}
-          - SubdomainSuffix: !FindInMap [ EnvironmentToSubdomainSuffix, !Ref Environment, Suffix ]
+        Subdomain: webinar
         HealthCheckPath: /api/health # customization
         MinCapacity: !Ref MinCapacity
 

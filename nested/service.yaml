@@ -8,8 +8,6 @@ Parameters:
   HealthCheckPath:
     Type: String
     Default: / # todo change the default value to /api/health once all services are no longer a mock.
-  SubdomainSuffix:
-    Type: String
   CertificationArn:
     Type: String
   RootDomain:
