@@ -71,6 +71,8 @@ Resources:
         - ContainerName: !Ref AWS::StackName
           ContainerPort: 3000
           TargetGroupArn: !Ref TargetGroup
+      DeploymentConfiguration:
+        MaximumPercent: 300 # default is  200, but increased for faster CD in production
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
