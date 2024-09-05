@@ -95,7 +95,6 @@ Resources:
         CertificationArn: !Ref CertificationArn
         RootDomain: !Ref RootDomainName
         Subdomain: auth
-        HealthCheckPath: /api/health # customization
         Cpu: 512
         Memory: 1024
         MinCapacity: !Ref MinCapacity
@@ -112,7 +111,6 @@ Resources:
         CertificationArn: !Ref CertificationArn
         RootDomain: !Ref RootDomainName
         Subdomain: webinar
-        HealthCheckPath: /api/health # customization
         MinCapacity: !Ref MinCapacity
 
 

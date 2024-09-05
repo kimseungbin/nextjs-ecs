@@ -7,7 +7,7 @@ Parameters:
     Type: String
   HealthCheckPath:
     Type: String
-    Default: / # todo change the default value to /api/health once all services are no longer a mock.
+    Default: /api/health
   CertificationArn:
     Type: String
   RootDomain:
