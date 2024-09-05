@@ -3,6 +3,10 @@ Description: Wishket Frontend Service Common Infrastructure.
 Resources:
   Cluster:
     Type: AWS::ECS::Cluster
+    Properties:
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
   ExecutionRole:
     Type: AWS::IAM::Role
     Properties:
