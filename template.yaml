@@ -112,7 +112,48 @@ Resources:
         RootDomain: !Ref RootDomainName
         Subdomain: webinar
         MinCapacity: !Ref MinCapacity
-
+  YozmService:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${BucketName}.s3.${AWS::Region}.amazonaws.com/${FileName}
+        - BucketName: !Ref NestedStackBucket
+          FileName: service.yaml
+      Parameters:
+        NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
+        ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
+        CertificationArn: !Ref CertificationArn
+        RootDomain: !Ref RootDomainName
+        Subdomain: yozm
+        MinCapacity: !Ref MinCapacity
+  CloudLanding:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${BucketName}.s3.${AWS::Region}.amazonaws.com/${FileName}
+        - BucketName: !Ref NestedStackBucket
+          FileName: service.yaml
+      Parameters:
+        NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
+        ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
+        CertificationArn: !Ref CertificationArn
+        RootDomain: !Ref RootDomainName
+        Subdomain: cloud-landing
+        MinCapacity: !Ref MinCapacity
+  CloudMsp:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${BucketName}.s3.${AWS::Region}.amazonaws.com/${FileName}
+        - BucketName: !Ref NestedStackBucket
+          FileName: service.yaml
+      Parameters:
+        NetworkStack: !Select [ 1, !Split [ '/', !Ref NetworkStack ] ]
+        ServiceCommonStack: !Select [ 1, !Split [ '/', !Ref ServiceCommonStack ] ]
+        CertificationArn: !Ref CertificationArn
+        RootDomain: !Ref RootDomainName
+        Subdomain: cloud
+        MinCapacity: !Ref MinCapacity
 
 
   #==================================================#
