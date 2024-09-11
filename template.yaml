@@ -2,9 +2,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::LanguageExtensions
 Description: Wishket Frontend AWS infrastructure.
 Parameters:
-  Project:
-    Type: String
-    Default: fe
   Environment:
     Type: String
     Description: Specifies the deployment environment for the AWS infrastructure.
@@ -44,7 +41,6 @@ Metadata:
       - Label:
           default: General Configuration
         Parameters:
-          - Project
           - Environment
           - NestedStackBucket
       - Label:
