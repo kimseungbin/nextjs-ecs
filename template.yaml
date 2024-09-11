@@ -29,6 +29,12 @@ Parameters:
   RootDomainName:
     Type: String
     Default: dev.wishdev.net
+  AuthMinCapacity:
+    Type: Number
+    Default: 1
+    Description: |
+      The minimum number of instances or tasks that will always be running in the Auto Scaling group or ECS service for Auth, even when there is no load.
+      Set this at least 5 in production.
   MinCapacity:
     Type: Number
     Default: 1
@@ -93,7 +99,7 @@ Resources:
         Subdomain: auth
         Cpu: 512
         Memory: 1024
-        MinCapacity: !Ref MinCapacity
+        MinCapacity: !Ref AuthMinCapacity
   WebinarService:
     Type: AWS::CloudFormation::Stack
     Properties:
