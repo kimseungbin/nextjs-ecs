@@ -65,6 +65,7 @@ Outputs:
     Value: !GetAtt [ ExecutionRole, Arn ]
     Export:
       Name: !Join [ '-', [ !Ref AWS::StackName, ExecutionRoleArn ] ]
+  # todo delete
   TaskDefinitionLogGroup:
     Value: !Ref TaskDefinitionLogGroup
     Export:

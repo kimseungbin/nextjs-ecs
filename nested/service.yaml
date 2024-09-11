@@ -92,8 +92,7 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group:
-                Fn::ImportValue: !Sub ${ServiceCommonStack}-TaskDefinitionLogGroup
+              awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: !Ref AWS::StackName
           PortMappings:
@@ -158,6 +157,15 @@ Resources:
               - random-value-1234567890 # todo parameterize
       ListenerArn: !Ref HttpListener
       Priority: 1
+
+  #==================================================#
+  # Logging                                          #
+  #==================================================#
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 7
+
 
   #==================================================#
   # Auto Scaling                                     #
