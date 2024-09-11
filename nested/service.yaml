@@ -175,7 +175,7 @@ Resources:
   ScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
     Properties:
-      MaxCapacity: 5 # todo parameterize if needed
+      MaxCapacity: 10
       MinCapacity: !Ref MinCapacity
       ResourceId: !Join
         - '/'
